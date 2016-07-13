@@ -20,6 +20,7 @@ class Main is Game
     Array<Model> poops
     number speed = 2
     integer timer = 0
+    integer timer2 = 0
 
     action Main
         StartGame()
@@ -43,18 +44,21 @@ class Main is Game
 
     action Update(number seconds)
         timer = timer + 1
+        timer2 = timer2 + 1
         change = random:RandomIntegerBetween(15, 30)
         if timer = 20
             brown:SetColor((random:RandomIntegerBetween(2, 10)/10), (random:RandomIntegerBetween(2, 10)/10), (random:RandomIntegerBetween(2, 10)/10), 1)
             timer = 0
         end
-
+        
+        if timer2 = 5
             Model poop
-            poop:LoadBox(0.2, 0.2, 0.2, brown)
+            poop:LoadSphere(0.2, 0.2, 0.2, brown)
             poop:SetPosition(bunny:GetX(), bunny:GetY(),bunny:GetZ())
             Add(poop)
             poops:Add(poop)
-
+            timer2 = 0
+        end
 
         if inputMonitor:IsKeyPressed(keys:E)
             number y = bunny:GetZ()
