@@ -7,16 +7,18 @@ use Libraries.Game.Graphics.Color
 use Libraries.Containers.Array
 use Libraries.Game.Graphics.AmbientLight
 use Libraries.Game.Graphics.DirectionalLight
+use Libraries.Compute.Random
 
 class Main is Game
     InputMonitor inputMonitor
     KeyboardEvent keys
     Color brown
     Model bunny
-    AmbientLight light1
+    Random random
+    boolean shift1 = false
     DirectionalLight light2
     Array<Model> poops
-    number speed = 10
+    number speed = 2
     integer timer = 0
 
     action Main
@@ -24,9 +26,16 @@ class Main is Game
     end
 
     action CreateGame
+        AmbientLight light1
         bunny:LoadBox(1, 1, 1, "bunny.png")
+        bunny:Rotate(0, 0, 1,90)
         Add(bunny)
-        brown:SetColor(0.6, 0.4, 0.3, 1)
+        brown:SetColor(0.55, 0.28, 0.17, 1)
+        light1:SetColor(0.45, 0.45, 0.45, 1)
+        SetAmbientLight(light1)
+        light2:SetColor(0.4, 0.4, 0.4, 1)
+        light2:SetDirection(0.1, -1, 1)
+        Add(light2)
  //       poop:LoadSphere(0.4, 0.4, 0.4, brown)
  //       poop:SetPosition(0,0,0)
  //       Add(poop)
@@ -34,32 +43,46 @@ class Main is Game
 
     action Update(number seconds)
         timer = timer + 1
+        change = random:RandomIntegerBetween(15, 30)
+        if timer = 20
+            brown:SetColor((random:RandomIntegerBetween(2, 10)/10), (random:RandomIntegerBetween(2, 10)/10), (random:RandomIntegerBetween(2, 10)/10), 1)
+            timer = 0
+        end
 
-        if timer = 15
             Model poop
-            poop:LoadSphere(0.4, 0.4, 0.4, brown)
+            poop:LoadBox(0.2, 0.2, 0.2, brown)
             poop:SetPosition(bunny:GetX(), bunny:GetY(),bunny:GetZ())
             Add(poop)
             poops:Add(poop)
-            timer = 0
-        end
-        
-        if inputMonitor:IsKeyPressed(keys:UP)
+
+
+        if inputMonitor:IsKeyPressed(keys:E)
+            number y = bunny:GetZ()
+            number newY = y + speed * seconds
+            bunny:SetZ(newY)
+
+        elseif inputMonitor:IsKeyPressed(keys:Q)
+            number y = bunny:GetZ()
+            number newY = y - speed * seconds
+            bunny:SetZ(newY)
+
+        elseif inputMonitor:IsKeyPressed(keys:W)
             number y = bunny:GetY()
             number newY = y + speed * seconds
             bunny:SetY(newY)
+            shift1 = false
 
-        elseif inputMonitor:IsKeyPressed(keys:DOWN)
+        elseif inputMonitor:IsKeyPressed(keys:S)
             number y = bunny:GetY()
             number newY = y - speed * seconds
             bunny:SetY(newY)
 
-        elseif inputMonitor:IsKeyPressed(keys:RIGHT)
+        elseif inputMonitor:IsKeyPressed(keys:D)
             number x = bunny:GetX()
             number newX = x + speed * seconds
             bunny:SetX(newX)
 
-        elseif inputMonitor:IsKeyPressed(keys:LEFT)
+        elseif inputMonitor:IsKeyPressed(keys:A)
             number x = bunny:GetX()
             number newX = x - speed * seconds
             bunny:SetX(newX)
