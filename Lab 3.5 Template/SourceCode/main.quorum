@@ -2,66 +2,68 @@ use Libraries.Game.Game
 use Libraries.Game.Graphics.Drawable
 use Libraries.Game.InputMonitor
 use Libraries.Interface.Events.KeyboardEvent
-/*
-    This is a default class for creating a game in Quorum. Note that the Main 
-    action begins by calling StartGame(), which loads a window a game can 
-    be displayed in. The action CreateGame is where the game should load any 
-    assets, like images to be displayed, frames of animation, or sounds to be
-    played. 
-*/
+use Libraries.Game.Graphics.Model
+use Libraries.Game.Graphics.Color
+use Libraries.Containers.Array
+use Libraries.Game.Graphics.AmbientLight
+use Libraries.Game.Graphics.DirectionalLight
 
 class Main is Game
-    InputMonitor inputMonitor       // handles user input during game
-    KeyboardEvent keys              // helps determine which key is pressed
-
-    Drawable bunny                  // bunny image
-    number speed = 100
-
-    /*
-        This action, Main, starts our computer program. In Quorum, programs always
-        begin from Main.
-    */
+    InputMonitor inputMonitor
+    KeyboardEvent keys
+    Color brown
+    Model bunny
+    AmbientLight light1
+    DirectionalLight light2
+    Array<Model> poops
+    number speed = 10
+    integer timer = 0
 
     action Main
         StartGame()
     end
 
-    /*
-        This action sets up the default values for a game. For example, we might
-        use the Libraries.Game.Graphics.Drawable class to load up an image or 
-        a shape. Or, we might add a Libraries.Interface.Button for making something clickable
-        or a Libraries.Interface.TextBox for gathering user input in a game.
-    */
-
     action CreateGame
-        bunny:Load("bunny.png")
+        bunny:LoadBox(1, 1, 1, "bunny.png")
         Add(bunny)
+        brown:SetColor(0.6, 0.4, 0.3, 1)
+ //       poop:LoadSphere(0.4, 0.4, 0.4, brown)
+ //       poop:SetPosition(0,0,0)
+ //       Add(poop)
     end
 
-    /*
-        The update action is called on every "frame" of animation in a game. This
-        action should be used to do operations on items. So, for example, we 
-        might use this action to change frames of animation, to rotate items, 
-        or to make creatures jump.
-    */
-
     action Update(number seconds)
+        timer = timer + 1
+
+        if timer = 15
+            Model poop
+            poop:LoadSphere(0.4, 0.4, 0.4, brown)
+            poop:SetPosition(bunny:GetX(), bunny:GetY(),bunny:GetZ())
+            Add(poop)
+            poops:Add(poop)
+            timer = 0
+        end
+        
         if inputMonitor:IsKeyPressed(keys:UP)
             number y = bunny:GetY()
             number newY = y + speed * seconds
             bunny:SetY(newY)
+
         elseif inputMonitor:IsKeyPressed(keys:DOWN)
             number y = bunny:GetY()
             number newY = y - speed * seconds
             bunny:SetY(newY)
+
         elseif inputMonitor:IsKeyPressed(keys:RIGHT)
             number x = bunny:GetX()
             number newX = x + speed * seconds
             bunny:SetX(newX)
+
         elseif inputMonitor:IsKeyPressed(keys:LEFT)
             number x = bunny:GetX()
             number newX = x - speed * seconds
             bunny:SetX(newX)
+
         end
     end
 end
