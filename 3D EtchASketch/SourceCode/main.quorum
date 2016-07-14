@@ -1,0 +1,140 @@
+use Libraries.Game.Game
+use Libraries.Game.Graphics.Drawable
+use Libraries.Game.InputMonitor
+use Libraries.Interface.Events.KeyboardEvent
+use Libraries.Game.Graphics.Model
+use Libraries.Game.Graphics.Color
+use Libraries.Containers.Array
+use Libraries.Game.Graphics.AmbientLight
+use Libraries.Game.Graphics.DirectionalLight
+use Libraries.Compute.Random
+use Libraries.Interface.Events.KeyboardListener
+use Libraries.Game.Graphics.Camera
+use Libraries.System.SystemHelper
+
+class Main is Game, KeyboardListener
+    InputMonitor inputMonitor
+    KeyboardEvent keys
+    Color brown
+    Model bunny
+    Random random
+    SystemHelper wait
+    boolean shift1 = false
+    DirectionalLight light2
+    Array<Model> poops
+    integer speed = 2
+    integer timer = 0
+    integer timer2 = 0
+    Camera camera = undefined
+    boolean shift = false
+    integer speedX = 0
+    integer speedY = 0
+    integer speedZ = 0
+
+    action Main
+        StartGame()
+    end
+
+    action CreateGame
+        camera = GetCamera3D()
+        camera:SetPosition(0, 0, -10)
+        camera:LookAt(0, 0, 0)
+        AmbientLight light1
+        bunny:LoadBox(1, 1, 1, "bunny.png")
+        bunny:Rotate(0, 0, 1,90)
+        Add(bunny)
+        brown:SetColor(0.55, 0.28, 0.17, 1)
+        light1:SetColor(0.45, 0.45, 0.45, 1)
+        SetAmbientLight(light1)
+        light2:SetColor(0.4, 0.4, 0.4, 1)
+        light2:SetDirection(0.1, -1, 1)
+        Add(light2)
+        AddKeyboardListener(me)
+ //       poop:LoadSphere(0.4, 0.4, 0.4, brown)
+ //       poop:SetPosition(0,0,0)
+ //       Add(poop)
+    end
+
+    action Update(number seconds)
+        timer = timer + 1
+        timer2 = timer2 + 1
+        change = random:RandomIntegerBetween(15, 30)
+        if timer = 20
+            brown:SetColor((random:RandomIntegerBetween(2, 10)/10), (random:RandomIntegerBetween(2, 10)/10), (random:RandomIntegerBetween(2, 10)/10), 1)
+            timer = 0
+        end
+        
+        if timer2 = 7
+            Model poop
+            poop:LoadSphere(0.2, 0.2, 0.2, brown)
+            poop:SetPosition(bunny:GetX(), bunny:GetY(),bunny:GetZ())
+            Add(poop)
+            poops:Add(poop)
+            timer2 = 0
+        end
+        
+        bunny:Move(speedX * seconds, speedY * seconds, speedZ * seconds)
+
+    end
+    
+    action PressedKey(KeyboardEvent event)
+        if event:keyCode = event:SHIFT_LEFT or event:keyCode = event:SHIFT_RIGHT
+            shift = true
+        end
+        if event:keyCode = event:UP
+            if shift = true
+                speedY = speed
+            else                
+                speedZ = speed
+            end
+        end
+        if event:keyCode = event:DOWN
+            if shift = true
+                speedY = - speed
+            else                
+                speedZ = -speed
+            end
+        end
+        if event:keyCode = event:RIGHT
+            speedX = speed
+        end
+        if event:keyCode = event:LEFT
+            speedX = -speed
+        end
+        if event:keyCode = event:E
+            Exit()
+        end
+        if event:keyCode = event:S
+                camera:Rotate(170, 0, 0, 1)
+        end
+    end
+    action ReleasedKey(KeyboardEvent event)
+        if event:keyCode = event:SHIFT_LEFT or event:keyCode = event:SHIFT_RIGHT
+            shift = false
+        end
+        if event:keyCode = event:UP
+            if shift = true
+                speedY = 0
+            else                
+                speedZ = 0
+            end
+        end
+        if event:keyCode = event:DOWN
+            if shift = true
+                speedY = 0
+            else                
+                speedZ = 0
+            end
+        end
+        if event:keyCode = event:RIGHT
+            speedX = 0
+        end
+        if event:keyCode = event:LEFT
+            speedX = 0
+        end
+        if event:keyCode = event:S
+            camera:Rotate(-170, 0, 0, 1)
+        end
+    end
+end
+    
