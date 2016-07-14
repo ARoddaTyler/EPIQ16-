@@ -113,27 +113,32 @@ class Main is Game, KeyboardListener
             shift = false
         end
         if event:keyCode = event:UP
-            if shift = true
-                speedY = 0
-            else                
+                speedX = 0
+                speedY = 0     
                 speedZ = 0
-            end
         end
         if event:keyCode = event:DOWN
-            if shift = true
-                speedY = 0
-            else                
+                speedX = 0
+                speedY = 0     
                 speedZ = 0
-            end
         end
         if event:keyCode = event:RIGHT
-            speedX = 0
+                speedX = 0
+                speedY = 0     
+                speedZ = 0
         end
         if event:keyCode = event:LEFT
-            speedX = 0
+                speedX = 0
+                speedY = 0     
+                speedZ = 0
         end
         if event:keyCode = event:S
             camera:Rotate(-170, 0, 0, 1)
+            integer counter = 0
+            repeat while counter < poops:GetSize() - 1
+               Remove(poops:Get(counter))
+               counter = counter + 1
+            end
         end
     end
 end
