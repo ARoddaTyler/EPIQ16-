@@ -15,6 +15,8 @@ use Libraries.Sound.Audio
 use Libraries.Game.Audio3D
 use Libraries.Sound.Speech
 use Libraries.Compute.Vector3
+use Libraries.Game.Layer
+use Libraries.Game.Layer2D
 
 class Main is Game, KeyboardListener
     Audio3D bunnySound
@@ -39,12 +41,21 @@ class Main is Game, KeyboardListener
     Vector3 object
     Vector3 yAxis
     Vector3 xAxis
+    Drawable background
+    Layer2D layer2D = undefined
 
-    action Main
+        action Main
+        SetFullScreen(true)
         StartGame()
     end
 
     action CreateGame
+        Layer2D tempLayer
+        layer2D = tempLayer
+        AddLayer(0, layer2D)
+        SetCurrentLayer2D(layer2D)
+        background:Load("Clouds.png")
+        Add(background)
         camera = GetCamera3D()
         camera:SetPosition(0, 0, -10)
         camera:LookAt(0, 0, 0)
@@ -65,7 +76,7 @@ class Main is Game, KeyboardListener
         bunnySound:EnableLooping()
         bunnySound:SetListenerPosition(camera:GetPosition())
         bunny:Add(bunnySound)
-        intro:Say("Use the arrow and shift arrow keys to move around the screen and draw your line. Use I, K, J, and L to rotate the camera, and R to rest the bunny's position. Use S to shake the screen, and use E to exit.")
+        intro:Say("Use the arrow and shift arrow keys to move around the screen and draw your line. Use I, K, J, and L to rotate the camera, and R to reset the bunny's position. Use S to shake the screen, and use E to exit.")
  //       poop:LoadSphere(0.4, 0.4, 0.4, brown)
  //       poop:SetPosition(0,0,0)
  //       Add(poop)
@@ -145,12 +156,24 @@ class Main is Game, KeyboardListener
             camera:Rotate(170, 0, 0, 1)
         end
         if event:keyCode = event:R
+            Remove(bunny)
             camera:SetPosition(0, 0, -10)
             camera:LookAt(0, 0, 0)
-            bunny:Move(0, 0, 0)
+            camera:SetUp(0, 1, 0)
+            camera:Update()
+            bunny:LoadBox(1, 1, 1, "bunny.png")
+//            bunny:Rotate(0, 0, 1,90)
+            bunny:SetPosition(0, 0, 0)
+            
+            
         end
     end
     action ReleasedKey(KeyboardEvent event)
+       if event:keyCode = event:R
+            camera:Move(0, 0, 1)
+//            bunny:Rotate(0, 0, 1,90)
+            Add(bunny)
+        end
         if event:keyCode = event:SHIFT_LEFT or event:keyCode = event:SHIFT_RIGHT
             shift = false
         end
