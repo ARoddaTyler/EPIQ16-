@@ -11,8 +11,13 @@ use Libraries.Compute.Random
 use Libraries.Interface.Events.KeyboardListener
 use Libraries.Game.Graphics.Camera
 use Libraries.System.SystemHelper
+use Libraries.Sound.Audio
+use Libraries.Game.Audio3D
+use Libraries.Sound.Speech
+use Libraries.Compute.Vector3
 
 class Main is Game, KeyboardListener
+    Audio3D bunnySound
     InputMonitor inputMonitor
     KeyboardEvent keys
     Color brown
@@ -30,6 +35,10 @@ class Main is Game, KeyboardListener
     integer speedX = 0
     integer speedY = 0
     integer speedZ = 0
+    Speech intro
+    Vector3 object
+    Vector3 yAxis
+    Vector3 xAxis
 
     action Main
         StartGame()
@@ -50,21 +59,31 @@ class Main is Game, KeyboardListener
         light2:SetDirection(0.1, -1, 1)
         Add(light2)
         AddKeyboardListener(me)
+        bunnySound:Load("plunger.wav")
+        bunnySound:SetVolume(0.7)
+        bunnySound:Play()
+        bunnySound:EnableLooping()
+        bunnySound:SetListenerPosition(camera:GetPosition())
+        bunny:Add(bunnySound)
+        intro:Say("Use the arrow and shift arrow keys to move around the screen and draw your line. Use I, K, J, and L to rotate the camera, and R to rest the bunny's position. Use S to shake the screen, and use E to exit.")
  //       poop:LoadSphere(0.4, 0.4, 0.4, brown)
  //       poop:SetPosition(0,0,0)
  //       Add(poop)
     end
 
     action Update(number seconds)
+        object:Set(bunny:GetGlobalPosition())
+        xAxis:Set(1, 0, 0)
+        yAxis:Set(0, 1, 0)
         timer = timer + 1
         timer2 = timer2 + 1
         change = random:RandomIntegerBetween(15, 30)
         if timer = 20
-            brown:SetColor((random:RandomIntegerBetween(2, 10)/10), (random:RandomIntegerBetween(2, 10)/10), (random:RandomIntegerBetween(2, 10)/10), 1)
+            brown:SetColor((random:RandomIntegerBetween(2, 10)/10.0), (random:RandomIntegerBetween(2, 10)/10.0), (random:RandomIntegerBetween(2, 10)/10.0), 1)
             timer = 0
         end
         
-        if timer2 = 7
+        if timer2 = 15
             Model poop
             poop:LoadSphere(0.2, 0.2, 0.2, brown)
             poop:SetPosition(bunny:GetX(), bunny:GetY(),bunny:GetZ())
@@ -104,8 +123,31 @@ class Main is Game, KeyboardListener
         if event:keyCode = event:E
             Exit()
         end
+        if event:keyCode = event:I
+           camera:RotateAround(object, xAxis, 15)
+           camera:LookAt(0,0,0)
+        end
+        if event:keyCode = event:K
+           camera:RotateAround(object, xAxis, -15)
+           camera:LookAt(0,0,0)
+        end        
+        if event:keyCode = event:L
+           camera:RotateAround(object, yAxis, 15)
+           camera:LookAt(0,0,0)
+        end
+        if event:keyCode = event:J
+           camera:RotateAround(object, yAxis, -15)
+           camera:LookAt(0,0,0)
+        end
         if event:keyCode = event:S
-                camera:Rotate(170, 0, 0, 1)
+            camera:SetPosition(0, 0, -10)
+            camera:LookAt(0,0,0)
+            camera:Rotate(170, 0, 0, 1)
+        end
+        if event:keyCode = event:R
+            camera:SetPosition(0, 0, -10)
+            camera:LookAt(0, 0, 0)
+            bunny:Move(0, 0, 0)
         end
     end
     action ReleasedKey(KeyboardEvent event)
@@ -132,6 +174,27 @@ class Main is Game, KeyboardListener
                 speedY = 0     
                 speedZ = 0
         end
+        if event:keyCode = event:I
+                speedX = 0
+                speedY = 0     
+                speedZ = 0
+        end
+        if event:keyCode = event:K
+                speedX = 0
+                speedY = 0     
+                speedZ = 0
+        end        
+        if event:keyCode = event:L
+                speedX = 0
+                speedY = 0     
+                speedZ = 0 
+        end
+        if event:keyCode = event:J
+                speedX = 0
+                speedY = 0     
+                speedZ = 0
+        end
+
         if event:keyCode = event:S
             camera:Rotate(-170, 0, 0, 1)
             integer counter = 0
