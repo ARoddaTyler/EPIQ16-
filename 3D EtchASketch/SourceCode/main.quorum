@@ -45,7 +45,7 @@ class Main is Game, KeyboardListener
     Layer2D layer2D = undefined
 
         action Main
-        SetFullScreen(true)
+//        SetFullScreen(true)
         StartGame()
     end
 
@@ -60,6 +60,8 @@ class Main is Game, KeyboardListener
         camera:SetPosition(0, 0, -10)
         camera:LookAt(0, 0, 0)
         AmbientLight light1
+ //       bunny:Load("rabbit_scorpion.obj")
+
         bunny:LoadBox(1, 1, 1, "bunny.png")
         bunny:Rotate(0, 0, 1,90)
         Add(bunny)
@@ -97,6 +99,8 @@ class Main is Game, KeyboardListener
         if timer2 = 15
             Model poop
             poop:LoadSphere(0.2, 0.2, 0.2, brown)
+  //          poop:Load("PoopModel/excrement.obj")
+  //          poop:Scale(0.25, 0.2, 0.25)
             poop:SetPosition(bunny:GetX(), bunny:GetY(),bunny:GetZ())
             Add(poop)
             poops:Add(poop)
@@ -227,5 +231,5 @@ class Main is Game, KeyboardListener
             end
         end
     end
-end
-    
+
+ end   
